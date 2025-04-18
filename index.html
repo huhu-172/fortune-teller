@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打工牛马每日运势</title>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #3a2e22;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #6b5b4a;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .temple-container {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            margin: 0 auto 30px;
+            perspective: 1000px;
+        }
+
+        .sign-bucket {
+            width: 180px;
+            height: 250px;
+            background: linear-gradient(to bottom, #ff7f7f, #ff5e5e);
+            border-radius: 10px;
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            background-image: linear-gradient(to bottom, #ff7f7f, #ff5e5e),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.3) 75%),
+                linear-gradient(-45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.3) 75%);
+            background-size: 100%, 20px 20px, 20px 20px;
+            background-position: 0 0, 0 0, 0 0;
+            animation: lightMove 5s linear infinite;
+        }
+
+        .sign-bucket:before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 30px;
+            background: #ff3e3e;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .sign-bucket:after {
+            content: '缘';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3a2e22;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        .sign-bucket:hover {
+            transform: translateY(-5px);
+            animation-duration: 2s;
+        }
+
+        .sign-bucket.shaking {
+            animation: bucket-shake 1s ease-in-out infinite;
+        }
+
+        @keyframes bucket-shake {
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-10deg);
+            }
+
+            75% {
+                transform: rotate(10deg);
+            }
+        }
+
+        @keyframes vibrate {
+            0% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-5px);
+            }
+
+            40% {
+                transform: translateX(5px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .sign-bucket.vibrate {
+            animation: vibrate 0.3s ease;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes lightMove {
+            0% {
+                background-position: 0 0, 0 0, 0 0;
+            }
+
+            100% {
+                background-position: 0 0, -20px -20px, 20px 20px;
+            }
+        }
+
+        .sign-stick {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 0;
+            background: linear-gradient(to bottom, #ffb3b3, #ff8c8c);
+            border-radius: 3px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: height 0.5s ease-out;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3a2e22;
+            font-weight: bold;
+            overflow: hidden;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            opacity: 0;
+        }
+
+        .sign-stick.show {
+            height: 80px;
+            animation: fall 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+                swing 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -80px;
+                opacity: 0;
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            60% {
+                top: -20px;
+                opacity: 1;
+                transform: translateX(-50%) rotate(10deg);
+            }
+
+            100% {
+                top: 20px;
+                opacity: 1;
+                transform: translateX(-50%) rotate(10deg);
+            }
+        }
+
+        @keyframes swing {
+            0% {
+                transform: translateX(-50%) rotate(10deg);
+            }
+
+            100% {
+                transform: translateX(-50%) rotate(-10deg);
+            }
+        }
+
+        .result-container {
+            background: linear-gradient(to bottom, #fdfdfd, #f5f5f5);
+            border-radius: 5px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid #e0e0e0;
+            position: relative;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .result-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #3a2e22;
+            font-weight: 700;
+            border-bottom: 2px solid #ff7f7f;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .result-desc {
+            color: #5a4a3a;
+            text-align: left;
+        }
+
+        .bad .result-title {
+            color: #991b1b;
+        }
+
+        .average .result-title {
+            color: #92400e;
+        }
+
+        .good .result-title {
+            color: #065f46;
+        }
+
+        .great .result-title {
+            color: #3730a3;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            background-color: #f59e0b;
+            opacity: 0;
+            z-index: 100;
+            border-radius: 50%;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #ff7f7f;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            color: #ff7f7f;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: #ff7f7f;
+            color: white;
+        }
+
+        .control-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .share-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff7f7f, #ff5e5e);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 127, 127, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 127, 127, 0.4);
+            background: linear-gradient(135deg, #ff5e5e, #ff7f7f);
+        }
+
+        .share-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .control-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .share-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 1rem;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>打工牛马运势签</h1>
+        <p class="subtitle">虔诚一摇，预知今日职场吉凶</p>
+
+        <div class="temple-container">
+            <div class="sign-bucket" id="signBucket">
+                <div class="sign-stick" id="signStick"></div>
+            </div>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <h2 class="result-title" id="resultTitle"></h2>
+            <p class="result-desc" id="resultDesc"></p>
+        </div>
+    </div>
+
+    <!-- 控制按钮 -->
+    <div class="controls">
+        <button class="control-btn" id="soundToggle" title="音效开关">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- 加载动画 -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 分享按钮 -->
+    <button class="share-btn" id="shareBtn" style="display: none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        分享运势
+    </button>
+
+    <!-- 音效元素 -->
+    <audio id="shakeSound" src="sounds/shake.mp3" preload="auto"></audio>
+    <audio id="signAppearSound" src="sounds/sign_appear.mp3" preload="auto"></audio>
+    <audio id="goodFortuneSound" src="sounds/good_fortune.mp3" preload="auto"></audio>
+    <audio id="badFortuneSound" src="sounds/bad_fortune.mp3" preload="auto"></audio>
+
+    <script>
+        // 运势数据
+        const fortunes = [
+            {
+                type: 'bad',
+                title: '下下签：地狱打工日',
+                desc: '🎯<b>今日运势</b>：此签主凶，你就等着吧，今天老板心情那叫一个差，会议像连环炮一样朝你轰来，加班更是跑都跑不掉，你就慢慢熬吧。\n\n💡<b>建议</b>：多备几包速溶咖啡，手机充好电，准备迎接这场暴风雨，说不定还能在无尽的加班中找到"乐趣"呢。\n\n🎁<b>幸运物</b>：无，今天你就别指望幸运物能拯救你了。\n\n✅<b>宜</b>：装病请假，能躲一时是一时。\n\n❌<b>忌</b>：顶撞上司，不然你会知道花儿为什么这样红。',
+                color: '#991b1b'
+            },
+            {
+                type: 'bad',
+                title: '下签：牛马劳碌命',
+                desc: '🎯<b>今日运势</b>：此签主劳，今天的工作量是平常的3倍，可工资一分都不会多给你，你就像头老黄牛一样，累死累活还没回报。\n\n💡<b>建议</b>：买个解压玩具吧，没事捏一捏，不然你可能会被这破工作逼疯。\n\n🎁<b>幸运物</b>：解压玩具，希望它能给你带来一丝慰藉。\n\n✅<b>宜</b>：带薪如厕，能摸一会儿是一会儿。\n\n❌<b>忌</b>：主动加班，你是嫌自己还不够累吗？\n\n摸鱼指数：★☆☆☆☆',
+                color: '#92400e'
+            },
+            {
+                type: 'bad',
+                title: '下签：职场背锅侠',
+                desc: '🎯<b>今日运势</b>：此签主衰，不知道哪个倒霉玩意儿把锅甩给你了，你今天就等着替别人擦屁股吧，业绩是别人的，黑锅是你的。\n\n💡<b>建议</b>：学会甩锅，别傻乎乎地全往自己身上揽，不然你会被压得喘不过气来。\n\n🎁<b>幸运物</b>：避雷针，祈求别再被雷劈了。\n\n✅<b>宜</b>：及时沟通，把事情说清楚。\n\n❌<b>忌</b>：独自承担，你没那么伟大。\n\n摸鱼指数：★☆☆☆☆',
+                color: '#92400e'
+            },
+            {
+                type: 'bad',
+                title: '下签：同事挖坑王',
+                desc: '🎯<b>今日运势</b>：此签主坑，你的同事今天就像一群挖坑小能手，到处给你设陷阱，你一不小心就会掉进去。\n\n💡<b>建议</b>：多长个心眼，别被他们的花言巧语骗了，不然你怎么死的都不知道。\n\n🎁<b>幸运物</b>：探雷器，提前发现陷阱。\n\n✅<b>宜</b>：谨慎行事，别轻易相信别人。\n\n❌<b>忌</b>：盲目跟风，跟着他们只会一起掉坑里。\n\n摸鱼指数：★☆☆☆☆',
+                color: '#92400e'
+            },
+            {
+                type: 'bad',
+                title: '下签：方案被毙日',
+                desc: '🎯<b>今日运势</b>：此签主败，你精心准备的方案今天大概率会被毙掉，不管你怎么努力，领导就是不满意，你就白忙活一场吧。\n\n💡<b>建议</b>：提前想好备用方案，别到时候抓瞎。\n\n🎁<b>幸运物</b>：橡皮擦，把不好的都擦掉。\n\n✅<b>宜</b>：虚心接受意见，重新修改。\n\n❌<b>忌</b>：固执己见，不然方案永远过不了。\n\n摸鱼指数：★☆☆☆☆',
+                color: '#92400e'
+            },
+            {
+                type: 'average',
+                title: '中平签：普通社畜日',
+                desc: '🎯<b>今日运势</b>：此签平平，今天没啥大风大浪，老板画的饼依旧又大又圆，你就继续在这虚幻的大饼下苟延残喘吧。\n\n💡<b>建议</b>：咖啡续命量：2杯，不然你可能会在这无聊的工作中睡着。\n\n🎁<b>幸运物</b>：咖啡杯，靠着咖啡撑过这一天。\n\n✅<b>宜</b>：假装忙碌，别让老板看出你在摸鱼。\n\n❌<b>忌</b>：效率过高，不然老板会给你安排更多的活。\n\n摸鱼指数：★★★☆☆',
+                color: '#854d0e'
+            },
+            {
+                type: 'average',
+                title: '中签：职场小透明',
+                desc: '🎯<b>今日运势</b>：此签主隐，今天你的存在感为零，就像空气一样，领导看不见你，同事也想不起你，正好适合安静摸鱼。\n\n💡<b>建议</b>：在领导面前假装很忙，别被发现你在偷懒。\n\n🎁<b>幸运物</b>：隐身衣，让你更好地隐藏自己。\n\n✅<b>宜</b>：低调行事，别惹麻烦。\n\n❌<b>忌</b>：引人注目，不然你会成为众矢之的。\n\n危险时段：下午3点',
+                color: '#a16207'
+            },
+            {
+                type: 'good',
+                title: '中吉签：摸鱼小能手',
+                desc: '🎯<b>今日运势</b>：此签主逸，今天你的工作运还不错，能高效完成工作，然后成功摸鱼，你就偷着乐吧。\n\n💡<b>建议</b>：提前完成任务，然后光明正大地摸鱼。\n\n🎁<b>幸运物</b>：手机，摸鱼必备神器。\n\n✅<b>宜</b>：提前完成任务，让老板对你刮目相看。\n\n❌<b>忌</b>：炫耀效率，不然会引起同事的嫉妒。\n\n老板画饼指数：★☆☆☆☆\n准点下班概率：80%',
+                color: '#166534'
+            },
+            {
+                type: 'good',
+                title: '上签：职场锦鲤',
+                desc: '🎯<b>今日运势</b>：此签主顺，今天工作顺风顺水，同事配合度高，领导要求少，你就像一条自由自在的锦鲤，在工作的海洋里畅游。\n\n💡<b>建议</b>：宜趁机完成积压工作，别浪费了这好运气。\n\n🎁<b>幸运物</b>：锦鲤挂件，带来更多好运。\n\n✅<b>宜</b>：趁机完成积压工作，让自己轻松一些。\n\n❌<b>忌</b>：炫耀准时下班，不然会招来同事的怨恨。\n\n幸运时段：午休后',
+                color: '#065f46'
+            },
+            {
+                type: 'great',
+                title: '上上签：天选打工人',
+                desc: '🎯<b>今日运势</b>：此签大吉，今天你的运势爆棚！工作轻松完成，领导突然请假，下午茶有人请客，还可能提前下班，你这是祖坟冒青烟了吧。\n\n💡<b>建议</b>：宜买彩票，说不定能中个大奖。\n\n🎁<b>幸运物</b>：彩票，说不定能让你一夜暴富。\n\n✅<b>宜</b>：买彩票，试试自己的运气。\n\n❌<b>忌</b>：得意忘形，不然好运会溜走的。\n\n摸鱼指数：★★★★★',
+                color: '#3730a3'
+            }
+        ];
+
+        // 获取DOM元素
+        const signBucket = document.getElementById('signBucket');
+        const signStick = document.getElementById('signStick');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultDesc = document.getElementById('resultDesc');
+        const shakeSound = document.getElementById('shakeSound');
+        const signAppearSound = document.getElementById('signAppearSound');
+        const goodFortuneSound = document.getElementById('goodFortuneSound');
+        const badFortuneSound = document.getElementById('badFortuneSound');
+        const soundToggle = document.getElementById('soundToggle');
+        const loading = document.getElementById('loading');
+        const shareBtn = document.getElementById('shareBtn');
+
+        // 音效状态
+        let isSoundEnabled = true;
+
+        // 音效控制
+        soundToggle.addEventListener('click', () => {
+            isSoundEnabled = !isSoundEnabled;
+            soundToggle.style.color = isSoundEnabled ? 'currentColor' : '#ff7f7f';
+        });
+
+        // 播放音效的辅助函数
+        function playSound(audio) {
+            if (isSoundEnabled) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log('音效播放失败:', e));
+            }
+        }
+
+        // 显示加载动画
+        function showLoading() {
+            loading.classList.add('show');
+        }
+
+        // 隐藏加载动画
+        function hideLoading() {
+            loading.classList.remove('show');
+        }
+
+        // 分享功能
+        function shareResult(result) {
+            const text = `今日运势：${result.title}\n${result.desc.replace(/<[^>]*>/g, '')}`;
+            const shareData = {
+                title: '打工牛马运势签',
+                text: text,
+                url: window.location.href
+            };
+            
+            // 检查是否支持Web Share API
+            if (navigator.share) {
+                navigator.share(shareData)
+                    .then(() => console.log('分享成功'))
+                    .catch((error) => {
+                        console.log('分享失败:', error);
+                        fallbackShare(text);
+                    });
+            } else {
+                fallbackShare(text);
+            }
+        }
+
+        // 备用分享方法
+        function fallbackShare(text) {
+            // 创建临时textarea元素
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            
+            // 选择并复制文本
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                // 显示提示
+                showToast('运势已复制到剪贴板！');
+            } catch (err) {
+                console.log('复制失败:', err);
+                showToast('复制失败，请手动复制');
+            }
+            
+            // 移除临时元素
+            document.body.removeChild(textarea);
+        }
+
+        // 显示提示
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 添加显示动画
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        let isShaking = false;
+
+        // 创建签文效果
+        function drawSign() {
+            if (isShaking) return;
+
+            isShaking = true;
+            showLoading();
+            resultContainer.classList.remove('show');
+            signStick.classList.remove('show');
+            signStick.textContent = '';
+            shareBtn.style.display = 'none';
+
+            // 开始摇晃签筒
+            signBucket.classList.add('shaking');
+            playSound(shakeSound);
+
+            // 摇晃2秒后出签
+            setTimeout(() => {
+                signBucket.classList.remove('shaking');
+
+                // 签文慢慢出现
+                signStick.classList.add('show');
+                playSound(signAppearSound);
+
+                // 随机选择运势
+                const resultIndex = Math.floor(Math.random() * fortunes.length);
+                const result = fortunes[resultIndex];
+
+                // 签上只显示简短的运势等级
+                signStick.textContent = result.title.split('：')[0];
+                signStick.style.color = result.color;
+
+                // 1秒后显示详细结果
+                setTimeout(() => {
+                    showResult(result);
+                    isShaking = false;
+                    hideLoading();
+                    shareBtn.style.display = 'block';
+
+                    // 根据运势类型播放不同的音效
+                    if (result.type === 'good' || result.type === 'great') {
+                        createConfetti();
+                        playSound(goodFortuneSound);
+                    } else if (result.type === 'bad') {
+                        playSound(badFortuneSound);
+                    }
+                    // 中等运势不播放音效
+                }, 1000);
+            }, 2000);
+        }
+
+        // 显示结果
+        function showResult(result) {
+            resultTitle.textContent = result.title;
+            resultDesc.innerHTML = result.desc.replace(/\n\n/g, '<br><br>');
+            resultContainer.className = `result-container ${result.type} show`;
+        }
+
+        // 创建礼花效果
+        function createConfetti() {
+            const colors = ['#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#6366f1', '#ec4899'];
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.width = `${Math.random() * 10 + 8}px`;
+                confetti.style.height = `${Math.random() * 10 + 8}px`;
+                confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                document.body.appendChild(confetti);
+
+                // 动画结束后移除元素
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // 添加分享按钮事件监听
+        shareBtn.addEventListener('click', () => {
+            const currentResult = fortunes.find(f => f.title === resultTitle.textContent);
+            if (currentResult) {
+                shareResult(currentResult);
+            }
+        });
+
+        // 点击签筒开始抽签
+        signBucket.addEventListener('click', drawSign);
+    </script>
+</body>
+
+</html>
+
+
